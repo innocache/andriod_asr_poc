@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Emulator + connectedDebugAndroidTest",
+			"type": "shell",
+			"command": "set -euo pipefail\nexport ANDROID_SDK_ROOT=\"$HOME/Library/Android/sdk\"\nexport PATH=\"$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$PATH\"\n\nadb kill-server >/dev/null 2>&1 || true\nadb start-server >/dev/null\nadb -s emulator-5554 emu kill >/dev/null 2>&1 || true\n\nnohup emulator -avd Medium_Phone_API_36.1 -port 5554 -no-window -no-audio -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -no-boot-anim > /tmp/emulator-5554.log 2>&1 &\n\n# wait for boot\nfor i in {1..180}; do\n  state=$(adb -s emulator-5554 get-state 2>/dev/null || true)\n  boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\\r' || true)\n  if [ \"$state\" = \"device\" ] && [ \"$boot\" = \"1\" ]; then\n    break\n  fi\n  if [ $((i % 15)) -eq 0 ]; then\n    echo \"[wait] i=$i state=$state boot=$boot\"\n  fi\n  sleep 2\ndone\n\nadb -s emulator-5554 shell input keyevent 82 >/dev/null 2>&1 || true\n\ncd android/SherpaOnnxVadAsr\nif [ -d \"/Applications/Android Studio.app/Contents/jbr/Contents/Home\" ]; then\n  export JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\"\nfi\n./gradlew connectedDebugAndroidTest --no-daemon"
+		},
+		{
+			"label": "Check emulator/gradle status",
+			"type": "shell",
+			"command": "export ANDROID_SDK_ROOT=\"$HOME/Library/Android/sdk\"; export PATH=\"$ANDROID_SDK_ROOT/platform-tools:$PATH\"; echo \"== adb devices ==\"; adb devices -l | sed -n '1,10p'; echo \"== boot_completed ==\"; adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\\r' || true; echo; echo \"== gradle/emulator processes (top few) ==\"; ps aux | egrep 'emulator|qemu-system|gradle|TestRunner' | head -n 20 || true"
+		},
+		{
+			"label": "Tail emulator log",
+			"type": "shell",
+			"command": "if [ -f /tmp/emulator-5554.log ]; then echo \"== /tmp/emulator-5554.log (tail) ==\"; tail -n 200 /tmp/emulator-5554.log; else echo \"No /tmp/emulator-5554.log found\"; fi"
+		}
+	]
+}

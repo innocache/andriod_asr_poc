@@ -1,0 +1,30 @@
+# Build outputs
+**/build/
+**/.gradle/
+
+# Android Studio / IntelliJ
+**/.idea/
+**/*.iml
+# Local SDK/NDK config
+local.properties
+
+# Local toolchain config
+/scripts/toolchain.env
+
+# macOS
+.DS_Store
+
+# Local SDK/NDK config
+local.properties
+
+# Vendor checkout (large)
+/vendor/
+
+# Downloaded models and native libs (large, reproducible via scripts)
+/android/**/app/src/main/assets/sherpa-onnx-*/
+/android/**/app/src/main/assets/*.onnx
+/android/**/app/src/main/assets/silero_vad.onnx
+/android/**/app/src/main/jniLibs/
+
+# Local Vosk model downloads (large, reproducible via scripts)
+/models/
