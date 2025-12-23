@@ -1,0 +1,56 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.k2fsa.sherpa.onnx.asr'
+    def compileSdkVer = (project.findProperty('ANDROID_COMPILE_SDK') ?: '33') as Integer
+    def targetSdkVer = (project.findProperty('ANDROID_TARGET_SDK') ?: '33') as Integer
+    def minSdkVer = (project.findProperty('ANDROID_MIN_SDK') ?: '21') as Integer
+
+    compileSdk compileSdkVer
+
+    if (project.hasProperty('ANDROID_NDK_VERSION')) {
+        ndkVersion project.property('ANDROID_NDK_VERSION')
+    }
+
+    defaultConfig {
+        minSdk minSdkVer
+        targetSdk targetSdkVer
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    
+    // Coroutines for Flow support
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${KOTLINX_COROUTINES_ANDROID_VERSION}"
+    
+    // Vosk for alternative ASR engine
+    implementation "com.alphacephei:vosk-android:${VOSK_ANDROID_VERSION}"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
