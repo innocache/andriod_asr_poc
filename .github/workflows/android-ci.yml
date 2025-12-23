@@ -146,9 +146,7 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          script: |
-            cd android/SherpaOnnxVadAsr
-            ./gradlew connectedDebugAndroidTest --no-daemon
+          script: cd android/SherpaOnnxVadAsr && ./gradlew connectedDebugAndroidTest --no-daemon
 
       - name: Upload instrumented test results
         uses: actions/upload-artifact@v4
