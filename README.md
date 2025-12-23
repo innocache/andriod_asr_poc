@@ -2,6 +2,13 @@
 
 An Android speech recognition application supporting both **offline batch processing** (VAD + ASR) and **real-time streaming transcription** using [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
 
+## 🎯 Key Components
+
+This project consists of:
+
+1. **`asr-lib`** - Reusable Android library for ASR functionality
+2. **`app`** - Demo application showcasing the library
+
 ## Features
 
 - **Offline ASR Engines**
@@ -18,31 +25,56 @@ An Android speech recognition application supporting both **offline batch proces
 - **Session Statistics**: Segments, duration, and RTF metrics
 - **Export/Share**: Share transcripts via Android share sheet
 
+## 📚 Library Usage
+
+To integrate ASR functionality into your existing Android app, use the **asr-lib** library module.
+
+See [asr-lib/README.md](android/SherpaOnnxVadAsr/asr-lib/README.md) for detailed integration guide and API documentation.
+
+### Quick Integration Example
+
+```kotlin
+// 1. Add library dependency in your app/build.gradle
+dependencies {
+    implementation project(':asr-lib')
+}
+
+// 2. Use the library in your code
+val asrEngine = AsrLibrary.createOfflineEngine(context)
+val transcript = asrEngine.decode(audioSamples, sampleRate = 16000)
+asrEngine.close()
+```
+
 ## Project Structure
 
 ```
 android/
-└── SherpaOnnxVadAsr/          # Main Android application
-    └── app/src/main/
-        ├── java/com/k2fsa/sherpa/onnx/
-        │   ├── vad/asr/            # Application code
-        │   │   ├── MainActivity.kt
-        │   │   ├── MainViewModel.kt
-        │   │   ├── RecordingState.kt
-        │   │   ├── AsrEngine.kt        # Offline ASR interface
-        │   │   ├── StreamingAsrEngine.kt # Streaming ASR interface
-        │   │   ├── SherpaMoonshineEngine.kt
-        │   │   ├── SherpaStreamingEngine.kt
-        │   │   ├── VoskEngine.kt
-        │   │   ├── VadProcessor.kt
-        │   │   ├── AudioRecorder.kt
-        │   │   └── AsrEngineFactory.kt
-        │   ├── OnlineRecognizer.kt     # Streaming JNI bindings
-        │   ├── OfflineRecognizer.kt    # Offline JNI bindings
-        │   └── Vad.kt                  # VAD JNI bindings
-        ├── assets/                 # Models (downloaded via scripts)
-        ├── jniLibs/               # Native libs (built via scripts)
-        └── res/                   # Android resources
+└── SherpaOnnxVadAsr/
+    ├── asr-lib/                    # ASR Library Module (reusable)
+    │   └── src/main/
+    │       ├── java/com/k2fsa/sherpa/onnx/
+    │       │   ├── asr/            # Library public API
+    │       │   │   ├── AsrLibrary.kt     # Main entry point
+    │       │   │   ├── AsrEngine.kt      # Offline ASR interface
+    │       │   │   ├── StreamingAsrEngine.kt # Streaming ASR interface
+    │       │   │   ├── SherpaMoonshineEngine.kt
+    │       │   │   ├── SherpaStreamingEngine.kt
+    │       │   │   ├── VoskEngine.kt
+    │       │   │   ├── VadProcessor.kt
+    │       │   │   ├── AudioRecorder.kt
+    │       │   │   └── AsrEngineFactory.kt
+    │       │   ├── OnlineRecognizer.kt   # Streaming JNI bindings
+    │       │   ├── OfflineRecognizer.kt  # Offline JNI bindings
+    │       │   └── Vad.kt                # VAD JNI bindings
+    │       └── assets/             # Models (downloaded via scripts)
+    │
+    └── app/                        # Demo Application
+        └── src/main/
+            ├── java/com/k2fsa/sherpa/onnx/vad/asr/
+            │   ├── MainActivity.kt
+            │   ├── MainViewModel.kt
+            │   └── RecordingState.kt
+            └── res/                # Android resources
 
 scripts/                           # Setup and build scripts
 vendor/                           # Third-party sources (sherpa-onnx)
